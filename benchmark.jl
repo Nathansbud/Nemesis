@@ -5,6 +5,8 @@ using Oceananigans
 println("Importing CUDA")
 using CUDA
 
+println(CUDA.has_cuda())
+
 macro sync_gpu(expr)
     return CUDA.has_cuda() ? :($(esc(CUDA.@sync expr))) : :($(esc(expr)))
 end
@@ -13,11 +15,11 @@ function benchmark_func(Arch, N)
     grid = RectilinearGrid(Arch(); size=(N, N, N), extent=(1, 1, 1))
     model = NonhydrostaticModel(grid=grid)
 
-    time_step!(model, 1) # warmup
+    time_step!(model, 10) # warmup
 
     trial = @benchmark begin
-        @sync_gpu time_step!($model, 1)
-    end samples = 10
+        @sync_gpu time_step!($model, 10)
+    end samples = 50
 
     return trial
 end
