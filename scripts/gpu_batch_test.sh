@@ -19,9 +19,6 @@ module load cuda
 
 nvidia-smi
 
-# nvidia-smi --query-gpu=power.draw --format=csv --loop=1 > power_usage_base.log &
-# nvidia-smi dmon -s p  > power_usage_dmon.log &
-
 while true; do
     timestamp=$(date +"%Y-%m-%d %T.%N")
     power_draw=$(nvidia-smi --query-gpu=power.draw --format=csv,noheader,nounits | tail -n 1)
@@ -30,14 +27,3 @@ while true; do
 done &
 
 julia ocean_test_1_gpu.jl
-
-# julia ocean_test_1_gpu.jl
-
-# ncu -o outputs/profile julia ocean_test_1_gpu.jl
-
-# nvprof --metrics power.draw julia ocean_test_1_gpu.jl
-
-# Compile CUDA program and run
-# nvcc -O2 experiments.cu 
-# Profile
-# nsys profile --stats=true --gpu-metrics-device=all --force-overwrite=true --output=outputs/gpu_report_2 julia ocean_test_1_gpu.jl
