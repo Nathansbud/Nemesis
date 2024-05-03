@@ -19,7 +19,7 @@ function benchmark_func(Arch, N)
 
     trial = @benchmark begin
         @sync_gpu time_step!($model, 10)
-    end samples = 50
+    end samples = 50 seconds = 30
 
     return trial
 end
