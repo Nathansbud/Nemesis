@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Attempt to request a specific 
+
+#SBATCH -p batch
+#SBATCH -C amd
+
+# Ensures all allocated cores are on the same node
+#SBATCH -N 1
+
+# Request 1 CPU core
+#SBATCH -n 1
+
+#SBATCH -t 00:15:00
+#SBATCH -o outputs/with_cpu_amd-%j.out
+#SBATCH -e outputs/with_cpu_amd-%j.err
+
+# Load CUDA module
+echo "~~~ NATIVE ~~~";
+julia -Cnative benchmark.jl CPU;
+
+for cf in branchfusion cmov harden-sls-ijmp harden-sls-ret lvi-load-hardening macrofusion pad-short-functions sse; 
+do
+	echo "~~~ $cf ~~~";	
+	julia -Cnative,+$cf benchmark.jl CPU; 
+done;
